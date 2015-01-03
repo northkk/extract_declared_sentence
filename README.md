@@ -47,5 +47,7 @@ Known Issue
 - 多人被告pattern。
 see doc of function `extract_accused_names`
 - 表格內有表格的無法處理。
-see doc of function `parse`
-- 判刑pattern的recall rate不明
+see doc of function `parse`.
+這還好，只有不到1/10表格有問題。
+- 判刑pattern的recall rate不明。
+有東西的doc不到1/10,應該regular expression的pattern 是主要問題，at function `findall_charge_sentence_pairs`。
