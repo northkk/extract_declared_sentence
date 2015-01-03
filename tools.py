@@ -7,8 +7,7 @@ import itertools
 pprint = pprint.pprint
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
-
+# log.setLevel(logging.INFO)
 
 # pattern : no other words in same line
 abstract_heading_pattern = r'\n\W*主\s*文\W*\n'
@@ -271,8 +270,10 @@ def extract_cells(fulltext, fname):
             format_exception.append(e)
             continue
 
+    #logging TableFormatException for debugging
     if format_exception:
-        log.debug('\n表格parsing失敗;{0} has table format not expected.'.format(fname))
-    for e in format_exception:
-        log.debug('{}'.format(e))
+        log.info('\n表格parsing失敗;{0} has table format not expected.'.format(fname))
+        for e in format_exception:
+            log.debug('{}'.format(e))
+
     return readable_cells_per_table

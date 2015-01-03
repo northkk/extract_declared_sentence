@@ -1,4 +1,5 @@
 import logging
+import logging.config
 import itertools
 import os
 import pprint
@@ -8,8 +9,8 @@ import sys
 from tools import get_accused_names, extract_cells, findall_charge_sentence_pairs
 
 
+logging.basicConfig(filename='extract_declared_sentence.log', filemode='w', level=logging.INFO)
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
 
 count = {'doc': 0,  # #docs processed
          'accused_extraction_fail': 0,
@@ -19,18 +20,20 @@ count = {'doc': 0,  # #docs processed
          'output': 0  # #docs that has had result written out.
 }
 
-
 def main():
     DIR = sys.argv[1]
-    # DIR = '/Users/apple/verdict'
-
-    dn, _, fns = next(os.walk(DIR))
-    paths = (os.path.join(dn, fn) for fn in fns if not fn.startswith('.'))
+    if os.path.isdir(DIR):
+        dn, _, fns = next(os.walk(DIR))
+        paths = (os.path.join(dn, fn) for fn in fns if not fn.startswith('.'))
+    elif os.path.isfile(DIR):
+        paths = [DIR]
+    else:
+        print('only accept a file or a dir path')
+        return
 
     for path in paths:
         count['doc'] += 1
         with open(path) as f:
-            # with open('/Users/apple/verdict/HsinchuLo_20140817_111550.csv') as f :
             text = f.read()
 
             # ####被告抽取
@@ -72,13 +75,14 @@ def main():
                 if any(charge_sentence_pairs.values()):  # 有東西才輸出
                     filename = os.path.basename(f.name)
                     res = [filename, charge_sentence_pairs]
-                    res_json = json.dumps(res, indent=4, ensure_ascii=False)
+                    res_json = json.dumps(res, indent=5, ensure_ascii=False)
                     print(res_json)
+                    # pprint.pprint(res)
                     count['output'] += 1
 
                 else:
                     pass
-
+    print('統計：')
     pprint.pprint(count)
 
 
