@@ -50,4 +50,4 @@ see doc of function `extract_accused_names`
 see doc of function `parse`.
 這還好，只有不到1/10表格有問題。
 - 判刑pattern的recall rate不明。
-有東西的doc不到1/10,應該regular expression的pattern 是主要問題，at function `findall_charge_sentence_pairs`。
+有東西的doc不到1/10，如果真實數字沒那麼低的話那應該regular expression的pattern 是主要問題，at function `findall_charge_sentence_pairs`。
