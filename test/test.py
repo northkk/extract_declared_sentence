@@ -12,7 +12,7 @@ class TestFunctions(unittest.TestCase):
             主 文
         '''
 
-        self.assertEqual(list(get_accused_names(data)), ['人 名○○'])
+        self.assertEqual(list(extract_accused_names(data)), ['人 名○○'])
 
     def test_extract_table_names(self):
         data = """

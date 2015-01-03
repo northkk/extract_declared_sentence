@@ -6,7 +6,7 @@ import pprint
 import json
 import sys
 
-from tools import get_accused_names, extract_cells, findall_charge_sentence_pairs
+from tools import extract_accused_names, extract_cells, findall_charge_sentence_pairs
 
 
 logging.basicConfig(filename='extract_declared_sentence.log', filemode='w', level=logging.INFO)
@@ -38,7 +38,7 @@ def main():
 
             # ####被告抽取
             try:
-                accused_list = frozenset(get_accused_names(text))
+                accused_list = frozenset(extract_accused_names(text))
                 if not accused_list:
                     raise Exception('PatternNotFound: the return of accused name is None.')
 

@@ -31,7 +31,7 @@ def search(pattern, string):
     return m
 
 
-def get_accused_names(fulltext):
+def extract_accused_names(fulltext):
     """
     被告名稱抓取
 
