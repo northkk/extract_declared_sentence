@@ -44,8 +44,8 @@ Description
 Known Issue
 ---
 
-- 多人被告pattern
+- 多人被告pattern。
 see doc of function `extract_accused_names`
-- 表格內有表格的無法處理
+- 表格內有表格的無法處理。
 see doc of function `parse`
 - 判刑pattern的recall rate不明

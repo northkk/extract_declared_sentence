@@ -23,14 +23,6 @@ class PatternNotFoundException(Exception):
     pass
 
 
-def search(pattern, string):
-    m = re.search(pattern, string)
-    if not m:
-        raise PatternNotFoundException('re.search(pattern={0},string={1}) found nothing'.format(pattern, string))
-
-    return m
-
-
 def extract_accused_names(fulltext):
     """
     被告名稱抓取
@@ -137,47 +129,6 @@ def extract_all_tables(text):
             for top, bottom in tables)
 
 
-#
-# def extract_table(name, text):
-# '''
-# find many matching of tableheader e.g.'附表X' and,
-# find the following table boundary '┌' and
-#     validate that the boundary is for the tableX .
-#     return table position (start,end) in text.
-#     '''
-#
-#     def find_valid_table(text):
-#         '''return the best table match
-#          'validate' the condition : distance<100
-#         '''
-#         # the pattern of tableheader is -- no words at left side of the name until \n.
-#         header_pattern = r'\n[^\w\n]*?{0}'.format(name)
-#         header_matches = tuple(re.finditer(header_pattern, text))
-#         table_matches = tuple(re.finditer(r'┌', text))
-#
-#         DIST_TRESHOLD = 100
-#
-#         candidates = []
-#         for table, header in itertools.product(table_matches, header_matches):
-#             dist = table.start() - header.start()
-#             candidates.append((table, dist))
-#
-#         candidates = [cand for cand in candidates if 0 <= cand[1] < DIST_TRESHOLD]
-#         if not candidates:
-#             raise TableNotFoundException(
-#                 'Valid table:{0} not found. \n\t candidates=None ; header_matches={1}; #table_matches={2}.\n'
-#                 .format(name, [m.group() for m in header_matches], len(table_matches)))
-#
-#         best = min(candidates, key=operator.itemgetter(1))
-#         return best[0]
-#
-#
-#     table = find_valid_table(text)
-#     bottom = re.search('┘', text[table.start():])
-#     start, end = (table.start(), table.start() + bottom.end())
-#     return text[start:end]
-
-
 def slide2(iterable):
     "s -> (s0,s1), (s1,s2), (s2, s3), ..."
     a, b = itertools.tee(iterable)
@@ -199,7 +150,7 @@ def extract_rows(table_text):
     start = re.search(r'┐', table_text).start()
     end = re.search(r'└', table_text).end()
     # if not(m1 and m2):
-    #         raise ValueError("table_text:{} doesn't have ┐ or └ boundary.".format(table_text))
+    # raise ValueError("table_text:{} doesn't have ┐ or └ boundary.".format(table_text))
     dividing_lines = re.finditer(pattern, table_text, re.VERBOSE)
     line_starts = (m.start() + 1 for m in dividing_lines)
     dividing_lines_pos = itertools.chain([start], line_starts, [end])  #+1 cuz a \n before ├
@@ -236,7 +187,7 @@ def parse(rows):
         lines = multiline_row.strip().split('\n')
 
         # requirement checking
-        #columns數每一行要求一樣
+        # columns數每一行要求一樣
         column_lens = (len(re.findall(pattern, line)) for line in lines)
         column_len = next(column_lens)
         if not all(l == column_len for l in column_lens):
@@ -270,10 +221,51 @@ def extract_cells(fulltext, fname):
             format_exception.append(e)
             continue
 
-    #logging TableFormatException for debugging
+    # logging TableFormatException for debugging
     if format_exception:
         log.info('\n表格parsing失敗;{0} has table format not expected.'.format(fname))
         for e in format_exception:
             log.debug('{}'.format(e))
 
     return readable_cells_per_table
+
+
+#
+# def extract_table(name, text):
+# '''
+# find many matching of tableheader e.g.'附表X' and,
+# find the following table boundary '┌' and
+# validate that the boundary is for the tableX .
+# return table position (start,end) in text.
+# '''
+#
+#     def find_valid_table(text):
+#         '''return the best table match
+#          'validate' the condition : distance<100
+#         '''
+#         # the pattern of tableheader is -- no words at left side of the name until \n.
+#         header_pattern = r'\n[^\w\n]*?{0}'.format(name)
+#         header_matches = tuple(re.finditer(header_pattern, text))
+#         table_matches = tuple(re.finditer(r'┌', text))
+#
+#         DIST_TRESHOLD = 100
+#
+#         candidates = []
+#         for table, header in itertools.product(table_matches, header_matches):
+#             dist = table.start() - header.start()
+#             candidates.append((table, dist))
+#
+#         candidates = [cand for cand in candidates if 0 <= cand[1] < DIST_TRESHOLD]
+#         if not candidates:
+#             raise TableNotFoundException(
+#                 'Valid table:{0} not found. \n\t candidates=None ; header_matches={1}; #table_matches={2}.\n'
+#                 .format(name, [m.group() for m in header_matches], len(table_matches)))
+#
+#         best = min(candidates, key=operator.itemgetter(1))
+#         return best[0]
+#
+#
+#     table = find_valid_table(text)
+#     bottom = re.search('┘', text[table.start():])
+#     start, end = (table.start(), table.start() + bottom.end())
+#     return text[start:end]
