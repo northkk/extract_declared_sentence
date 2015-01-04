@@ -11,7 +11,6 @@ USAGE
 `["file name", {"accused1": [ ["charge1", "sentence1"], ...], "accused2":[...], ...} ]`         
 Log file is generated locally.
 
----
 ###抽取表格cell
 如果僅需要抽取cell 可以用 `tools.extract_cells(text)` 。
 
