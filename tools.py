@@ -23,7 +23,7 @@ class PatternNotFoundException(Exception):
     pass
 
 
-def extract_accused_names(fulltext):
+def extract_accuseds(fulltext):
     """
     被告名稱抓取
 
@@ -66,7 +66,7 @@ def extract_table_names(fulltext):
     return (m.group(1) for m in matches)
 
 
-def findall_charge_sentence_pairs(accused, text):
+def extract_sentences(accused, text):
     """抓罪名和判刑charge+sentence，使用很限制的pattern，charge之後標點符號直接接sentence。
     囧....'禠'!='褫'，同一個字文本內的和自己打的不相等。無法理解？
 
@@ -153,7 +153,7 @@ def extract_rows(table_text):
     # raise ValueError("table_text:{} doesn't have ┐ or └ boundary.".format(table_text))
     dividing_lines = re.finditer(pattern, table_text, re.VERBOSE)
     line_starts = (m.start() + 1 for m in dividing_lines)
-    dividing_lines_pos = itertools.chain([start], line_starts, [end])  #+1 cuz a \n before ├
+    dividing_lines_pos = itertools.chain([start], line_starts, [end])  # +1 cuz a \n before ├
 
     pairs = slide2(dividing_lines_pos)
     rows = (table_text[s:e] for s, e in pairs)
@@ -191,7 +191,7 @@ def parse(rows):
         column_lens = (len(re.findall(pattern, line)) for line in lines)
         column_len = next(column_lens)
         if not all(l == column_len for l in column_lens):
-            raise TableFormatException('the column is not fixed :{}...'.format(multiline_row[:15]))
+            raise TableFormatException('parsing fail, column is not consistent :{}...'.format(multiline_row[:15]))
 
         result = [''] * column_len
         for line in lines:
@@ -201,10 +201,10 @@ def parse(rows):
         yield list(result)
 
 
-def extract_cells(fulltext, fname=None):
+def extract_cells(fulltext):
     """抓出所有table，並parse into readable cells of table。
     輸出cells list per table,
-    無法解析的table輸出[]
+    無法解析的table輸出[]. (fail at parsing)
     :return: list of table which is composed of a list of cell strings ,
     :rtype : list[list[str]]
     """
@@ -223,7 +223,6 @@ def extract_cells(fulltext, fname=None):
 
     # logging TableFormatException for debugging
     if format_exception:
-        log.info('\n表格parsing失敗;{0} has table format not expected.'.format(fname))
         for e in format_exception:
             log.debug('{}'.format(e))
 
@@ -239,7 +238,7 @@ def extract_cells(fulltext, fname=None):
 # return table position (start,end) in text.
 # '''
 #
-#     def find_valid_table(text):
+# def find_valid_table(text):
 #         '''return the best table match
 #          'validate' the condition : distance<100
 #         '''

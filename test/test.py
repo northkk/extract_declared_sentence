@@ -12,7 +12,7 @@ class TestFunctions(unittest.TestCase):
             主 文
         '''
 
-        self.assertEqual(list(extract_accused_names(data)), ['人 名○○'])
+        self.assertEqual(list(extract_accuseds(data)), ['人 名○○'])
 
     def test_extract_table_names(self):
         data = """
@@ -42,7 +42,7 @@ class TestFunctions(unittest.TestCase):
 
             B犯測試失敗罪。
             '''
-        self.assertEqual(list(findall_charge_sentence_pairs('A', data)), [('Axx被訴xx部分無罪', None),
+        self.assertEqual(list(extract_sentences('A', data)), [('Axx被訴xx部分無罪', None),
                                                                           ('Axx犯xx罪部分無罪', None),
                                                                           ('A、B、C均無罪', None),
                                                                           ('Axx犯xx罪', '免刑；'),
