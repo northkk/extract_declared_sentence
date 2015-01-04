@@ -201,7 +201,7 @@ def parse(rows):
         yield list(result)
 
 
-def extract_cells(fulltext, fname):
+def extract_cells(fulltext, fname=None):
     """抓出所有table，並parse into readable cells of table。
     輸出cells list per table,
     無法解析的table輸出[]

@@ -51,7 +51,7 @@ def main():
             try:
                 # 不做主文附表名稱抽取，直接table全抓。
                 # 假設附表一定是表格
-                cells_per_table = extract_cells(text, f)
+                cells_per_table = extract_cells(text, fname=f.name)
                 failed_count = sum(1 for cells in cells_per_table if not cells)
                 count['table_format_exception'] += failed_count
                 count['table_processing_fail'] += failed_count
