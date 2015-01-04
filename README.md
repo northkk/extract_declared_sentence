@@ -13,6 +13,7 @@ Log file is generated locally.
 
 ###抽取表格cell
 如果僅需要抽取cell 可以用 `tools.extract_cells(text)` 。
+note：僅抽取cell內容為string，並沒有表格結構化。
 
 Description
 ---
