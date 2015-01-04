@@ -2,9 +2,14 @@ extract declared sentence
 =========================
 抽取宣告刑。
 
+
+
+USAGE
+---
+
 **usage example:** `python3 extract_declared_sentence.py <directory or file path>`
 
-**output example:**
+**output example:** josn
 ```
 [
    "file name", 
@@ -23,6 +28,11 @@ extract declared sentence
 ```         
 
 Log file is generated locally.
+
+
+---
+
+如果僅需要抽取cell 可以用 `tools.extract_cells(text)` 。
 
 Description
 ---
@@ -49,5 +59,5 @@ see doc of function `extract_accused_names`
 - 表格內有表格的無法處理。
 see doc of function `parse`.
 這還好，只有不到1/10表格有問題。
-- 判刑pattern的recall rate不明。
+- 判刑pattern的recall rate不明。需要一些test set for evaluation。
 有抓出表格宣告型的doc不到1/10，如果真實數字沒那麼低的話那應該regular expression的pattern 是主要問題，at function `findall_charge_sentence_pairs`。
