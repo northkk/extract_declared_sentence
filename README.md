@@ -1,37 +1,18 @@
 extract declared sentence
 =========================
-抽取宣告刑。
-
 
 
 USAGE
 ---
-
+###抽取宣告刑
 **usage example:** `python3 extract_declared_sentence.py <directory or file path>`
 
-**output example:** josn
-```
-[
-   "file name", 
-   {
-      "accused": [
-         [
-            "charge", 
-            "sentence"
-         ],
-         ...
-      ]
-      ...
-   }
-   ...
-]
-```         
-
+**output format:** json
+`["file name", {"accused1": [ ["charge1", "sentence1"], ...], "accused2":[...], ...} ]`         
 Log file is generated locally.
 
-
 ---
-
+###抽取表格cell
 如果僅需要抽取cell 可以用 `tools.extract_cells(text)` 。
 
 Description
