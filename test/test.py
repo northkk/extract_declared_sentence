@@ -112,7 +112,7 @@ class TestFunctions(unittest.TestCase):
                            'A共同犯行使偽造公文書罪，處有期徒刑壹年。如附表二所示之偽造印文、署押，（含電池、SIM 卡），均沒收。           ']])
 
 
-    def test_extract_cells(self):
+    def test_extract_cells_per_table(self):
         data = '''
 blabla
 附表三：
@@ -135,7 +135,7 @@ blabla
 └───────────────────┘
 '''
 
-        self.assertEqual(list(extract_cells(data,None)),
+        self.assertEqual(list(extract_cells_per_table(data)),
                          [['98年度離島造林標案核定底價、決標情形一覽表     ',
                            '編號        ',
                            '犯罪事實                ',

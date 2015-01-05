@@ -57,7 +57,7 @@ def main(extract_accuseds=tools.extract_accuseds,
             try:
                 # 不做主文附表名稱抽取，直接table全抓。
                 # 假設附表一定是表格
-                cells_per_table = tools.extract_cells(text)
+                cells_per_table = list(tools.extract_cells_per_table(text))
 
                 #count
                 failed_count = sum(1 for cells in cells_per_table if not cells)

@@ -25,8 +25,7 @@ class PatternNotFoundException(Exception):
 
 def extract_accuseds(fulltext):
     """
-    被告名稱抓取
-
+    被告名稱抓取.
     多人CASE如下沒有考慮：
     被告 人名
         人名
@@ -52,13 +51,11 @@ def extract_accuseds(fulltext):
 
 def extract_table_names(fulltext):
     """"""
-
     # locate 主文~事實
     start = re.search(abstract_heading_pattern, fulltext).start()
     # 主文之後的section標題不太一定(eg. 犯罪事實及理由)
     p = '|'.join([fact_heading_pattern, reason_heading_pattern, fact_reason_heading_pattern])
     end = re.search(p, fulltext).end()
-
 
     # 提到的附表全包下，非常不精確，有很多提到的附表是跟判刑無關。
     text = re.sub('\n', '', fulltext[start:end])
@@ -69,7 +66,6 @@ def extract_table_names(fulltext):
 def extract_sentences(accused, text):
     """抓罪名和判刑charge+sentence，使用很限制的pattern，charge之後標點符號直接接sentence。
     囧....'禠'!='褫'，同一個字文本內的和自己打的不相等。無法理解？
-
     失敗case：
     A犯xx罪，xx罪。
     A,B,C 均無罪。
@@ -114,10 +110,6 @@ def extract_sentences(accused, text):
     return itertools.chain(not_charges, charge_sentence_pairs)  # not_charge和charge是exclusive pattern
 
 
-class TableNotFoundException(Exception):
-    pass
-
-
 def extract_all_tables(text):
     """extract all table that has boundary '┌' and '┘'.
     :return:  iterable of table strings.
@@ -149,8 +141,6 @@ def extract_rows(table_text):
     '''
     start = re.search(r'┐', table_text).start()
     end = re.search(r'└', table_text).end()
-    # if not(m1 and m2):
-    # raise ValueError("table_text:{} doesn't have ┐ or └ boundary.".format(table_text))
     dividing_lines = re.finditer(pattern, table_text, re.VERBOSE)
     line_starts = (m.start() + 1 for m in dividing_lines)
     dividing_lines_pos = itertools.chain([start], line_starts, [end])  # +1 cuz a \n before ├
@@ -201,32 +191,31 @@ def parse(rows):
         yield list(result)
 
 
-def extract_cells(fulltext):
+def extract_cells_per_table(text):
     """抓出所有table，並parse into readable cells of table。
     輸出cells list per table,
     無法解析的table輸出[]. (fail at parsing)
-    :return: list of table which is composed of a list of cell strings ,
-    :rtype : list[list[str]]
+    :return: Iterable of table which is composed of a list of cell strings ,
+    :rtype : Iterable[list[str]]
     """
-    appendix = fulltext
-    readable_cells_per_table = []
-    format_exception = []
-    for table in extract_all_tables(appendix):
+    for table in extract_all_tables(text):
         try:
             readable_rows = parse(extract_rows(table))
-            cells = [cell_str for row in readable_rows for cell_str in row]
-            readable_cells_per_table.append(cells)
         except TableFormatException as e:
-            readable_cells_per_table.append([])
-            format_exception.append(e)
-            continue
-
-    # logging TableFormatException for debugging
-    if format_exception:
-        for e in format_exception:
             log.debug('{}'.format(e))
+            yield []
+            continue
+        else:
+            cells = [cell_str for row in readable_rows for cell_str in row]
+            yield cells
 
-    return readable_cells_per_table
+
+def extract_cells(text):
+    """抓出所有table，並parse into readable cell strings。
+    無法解析的table自動跳過.
+    :rtype : list[str]
+    """
+    return list(itertools.chain.from_iterable(extract_cells_per_table(text)))
 
 
 #
@@ -239,9 +228,9 @@ def extract_cells(fulltext):
 # '''
 #
 # def find_valid_table(text):
-#         '''return the best table match
-#          'validate' the condition : distance<100
-#         '''
+# '''return the best table match
+# 'validate' the condition : distance<100
+# '''
 #         # the pattern of tableheader is -- no words at left side of the name until \n.
 #         header_pattern = r'\n[^\w\n]*?{0}'.format(name)
 #         header_matches = tuple(re.finditer(header_pattern, text))
