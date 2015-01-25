@@ -1,8 +1,10 @@
+import os
 import re
 import logging
 
 import pprint
 import itertools
+import sys
 
 pprint = pprint.pprint
 
@@ -117,8 +119,17 @@ def extract_all_tables(text):
     tops = re.finditer(r'┌', text)
     bottom_of = lambda top: re.search(r'┘', text[top.start():])
     tables = ( (top, bottom_of(top)) for top in tops )
-    return (text[top.start():top.start() + bottom.end()]
-            for top, bottom in tables)
+
+    for top, bottom in tables:
+        try:
+            yield text[top.start():top.start() + bottom.end()]
+        except Exception as e: #mainly AttributeError  that top or end is None
+            log.debug('{}'.format(e))
+            #skip !!
+            continue
+
+    # return (text[top.start():top.start() + bottom.end()]
+    #         for top, bottom in tables)
 
 
 def slide2(iterable):
@@ -201,13 +212,12 @@ def extract_cells_per_table(text):
     for table in extract_all_tables(text):
         try:
             readable_rows = parse(extract_rows(table))
-        except TableFormatException as e:
+            cells = [cell_str for row in readable_rows for cell_str in row]
+            yield cells
+        except Exception as e:  #mainly TableFormatException
             log.debug('{}'.format(e))
             yield []
             continue
-        else:
-            cells = [cell_str for row in readable_rows for cell_str in row]
-            yield cells
 
 
 def extract_cells(text):
@@ -231,7 +241,7 @@ def extract_cells(text):
 # '''return the best table match
 # 'validate' the condition : distance<100
 # '''
-#         # the pattern of tableheader is -- no words at left side of the name until \n.
+# # the pattern of tableheader is -- no words at left side of the name until \n.
 #         header_pattern = r'\n[^\w\n]*?{0}'.format(name)
 #         header_matches = tuple(re.finditer(header_pattern, text))
 #         table_matches = tuple(re.finditer(r'┌', text))
