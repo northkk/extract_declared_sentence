@@ -1,0 +1,17 @@
+{
+  "author": "superChing",
+  "status": "",
+  "name": "extract_declared_sentence",
+  "name_zh": "貪污判決與查詢網站",
+  "description": "",
+  "description_zh": "",
+  "homepage": "https://dc.vtaiwan.tw/about/",
+  "document": "https://github.com/superChing/extract_declared_sentence/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superChing/extract_declared_sentence"
+  },
+  "contributors": [
+    "superChing"
+  ]
+}
